@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: vprocache01
+spec:
+  type: ClusterIP
+  selector:
+    app: vpromem
+  ports:
+  - port: 11211
+    targetPort: vpromem-port
