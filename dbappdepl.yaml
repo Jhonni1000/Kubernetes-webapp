@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vprodb
+  labels:
+    app: vprodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vprodb
+  template:
+    metadata:
+      labels:
+        app: vprodb
+    spec:
+      containers:
+      - name: vprodb
+        image: jhonni1000/vprofile-db01:V1
+
+        # Ignore Lost+Found DIR
+        args:
+          - "ignore-db-dir=lost+found"
+
+        # Mount mySQL pod data path to AWS EBS Volume
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: vpro-db-data
+        ports: 
+        - name: vprodb-port
+          containerPort: 3306
+
+        # Create environment variable to read password from secret.yaml
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secret
+                key: db-pass   
+
+      nodeSelector:
+        zone: us-east-1a 
+
+      # Attach AWS EBS Volume 
+      volumes:
+        - name: vpro-db-data
+          awsElasticBlockStore:
+            volumeID: vol-05a6ec70fc1b1e4fd
+            fsType: ext4
+
