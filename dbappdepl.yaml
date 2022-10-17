@@ -20,7 +20,7 @@ spec:
 
         # Ignore Lost+Found DIR
         args:
-          - "ignore-db-dir=lost+found"
+          - "--ignore-db-dir=lost+found"
 
         # Mount mySQL pod data path to AWS EBS Volume
         volumeMounts:
